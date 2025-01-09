@@ -2,16 +2,37 @@
 <html>
 <head>
     <title>Testing MyApp</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
-<body>
-    <h1 align="center">Vítaj</h1>
-    <form id="myForm" action="index.php" method="get">
-        Křestní Jméno: <input type="text" name="firstname" id="firstname" required><br>
-        Město: <input type="text" name="city" id="city" required><br>
-        <input type="submit" value="Submit">
-    </form>
-    <p id="result"></p>
-    <p id="error" style="color: red;"></p>
+<body class="bg-light">
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h1 class="text-center mb-4">Vítaj</h1>
+                        <form id="myForm" action="index.php" method="get">
+                            <div class="mb-3">
+                                <label for="firstname" class="form-label">Křestní Jméno:</label>
+                                <input type="text" class="form-control" name="firstname" id="firstname" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="city" class="form-label">Město:</label>
+                                <input type="text" class="form-control" name="city" id="city" required>
+                            </div>
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-primary">Odeslat</button>
+                            </div>
+                        </form>
+                        <p id="result" class="mt-4 text-success"></p>
+                        <p id="error" class="mt-2 text-danger"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
     <script>
         const form = document.getElementById('myForm');
         const resultParagraph = document.getElementById('result');
@@ -25,12 +46,13 @@
             const firstName = form.firstname.value.trim();
             const city = form.city.value.trim();
 
-            function isValidInput(str) {
-                const regex = /^[a-zA-Z]+$/; 
+            function isValidInput(str, allowSpecial = false) {
+                const regex = allowSpecial 
+                    ? /^[a-zA-ZáčďéěíňóřšťúůýžÁČĎÉĚÍŇÓŘŠŤÚŮÝŽ\-\s]+$/ 
+                    : /^[a-zA-ZáčďéěíňóřšťúůýžÁČĎÉĚÍŇÓŘŠŤÚŮÝŽ]+$/; 
                 return regex.test(str);
             }
 
-          
             if (!firstName || !city) {
                 errorParagraph.textContent = 'Obě políčka musí být vypsané';
                 return;
@@ -41,21 +63,22 @@
                 return;
             }
 
-            if (!isValidInput(city)) {
-                errorParagraph.textContent = 'Error, do Města lze napsat jen písmenka';
+            if (!isValidInput(city, true)) {
+                errorParagraph.textContent = 'Error, do Města lze napsat jen písmenka, mezery a pomlčky';
                 return;
             }
 
             // Function to count vowels and consonants
             function countVowelsAndConsonants(str) {
-                const vowels = 'aeiouAEIOU';
+                const vowels = 'aáeěéiíouůúyýAÁEĚÉIÍOUŮÚYÝ';
+                const consonants = 'bcčdďfghjklmnňpqrřsštťvwxzžBCČDĎFGHJJKLMNŇPQRŘSŠTŤVWXZŽ';
                 let vowelCount = 0;
                 let consonantCount = 0;
 
                 for (let i = 0; i < str.length; i++) {
                     if (vowels.includes(str[i])) {
                         vowelCount++;
-                    } else {
+                    } else if (consonants.includes(str[i])) {
                         consonantCount++;
                     }
                 }
@@ -68,9 +91,9 @@
             const cityCounts = countVowelsAndConsonants(city);
 
             // Display result
-            const result = `Vítej (${firstName}) z (${city}). Ve tvém jménu jsou ${firstNameCounts.vowelCount} samohlásky a ${firstNameCounts.consonantCount} souhlásky, a ve tvém městě jsou ${cityCounts.vowelCount} samohlásky a ${cityCounts.consonantCount} souhlásky.`;
+            const result = `Vítej (${firstName}) z (${city}). Ve tvém jménu jsou ${firstNameCounts.vowelCount} samohlásky (${firstName.match(/[aáeěéiíouůúyýAÁEÉIÍOUŮÚYÝ]/g)?.join(', ') || 'žádné'}) a ${firstNameCounts.consonantCount} souhlásky, a ve tvém městě jsou ${cityCounts.vowelCount} samohlásky a ${cityCounts.consonantCount} souhlásky.`;
             resultParagraph.textContent = result;
-        });
+        }); 
     </script>
 </body>
 </html>
