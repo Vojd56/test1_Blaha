@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Testing MyApp</title>
+</head>
+<body>
+    <h1 align="center">Vítaj</h1>
+    <form id="myForm" action="index.php" method="get">
+        Křestní Jméno: <input type="text" name="firstname" id="firstname" required><br>
+        Město: <input type="text" name="city" id="city" required><br>
+        <input type="submit" value="Submit">
+    </form>
+    <p id="result"></p>
+    <p id="error" style="color: red;"></p>
+    <script>
+        const form = document.getElementById('myForm');
+        const resultParagraph = document.getElementById('result');
+        const errorParagraph = document.getElementById('error');
+
+        form.addEventListener('submit', (event) => {
+            event.preventDefault();
+            errorParagraph.textContent = ''; 
+            resultParagraph.textContent = ''; 
+
+            const firstName = form.firstname.value.trim();
+            const city = form.city.value.trim();
+
+            function isValidInput(str) {
+                const regex = /^[a-zA-Z]+$/; 
+                return regex.test(str);
+            }
+
+          
+            if (!firstName || !city) {
+                errorParagraph.textContent = 'Obě políčka musí být vypsané';
+                return;
+            }
+
+            if (!isValidInput(firstName)) {
+                errorParagraph.textContent = 'Error, do Křestního jména lze napsat jen písmenka';
+                return;
+            }
+
+            if (!isValidInput(city)) {
+                errorParagraph.textContent = 'Error, do Města lze napsat jen písmenka';
+                return;
+            }
+
+            // Function to count vowels and consonants
+            function countVowelsAndConsonants(str) {
+                const vowels = 'aeiouAEIOU';
+                let vowelCount = 0;
+                let consonantCount = 0;
+
+                for (let i = 0; i < str.length; i++) {
+                    if (vowels.includes(str[i])) {
+                        vowelCount++;
+                    } else {
+                        consonantCount++;
+                    }
+                }
+
+                return { vowelCount, consonantCount };
+            }
+
+            // Calculate counts
+            const firstNameCounts = countVowelsAndConsonants(firstName);
+            const cityCounts = countVowelsAndConsonants(city);
+
+            // Display result
+            const result = `Vítej (${firstName}) z (${city}). Ve tvém jménu jsou ${firstNameCounts.vowelCount} samohlásky a ${firstNameCounts.consonantCount} souhlásky, a ve tvém městě jsou ${cityCounts.vowelCount} samohlásky a ${cityCounts.consonantCount} souhlásky.`;
+            resultParagraph.textContent = result;
+        });
+    </script>
+</body>
+</html>
